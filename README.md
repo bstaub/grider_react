@@ -21,6 +21,7 @@ docker exec -it <container-id> npm run test
 
 // Prod Build Step
 docker build .
+docker build -t bstaub/grider_react .  (optional we tag an image)
 docker run -p 8080:80 <container-id>
 
 // Cleanup Step
