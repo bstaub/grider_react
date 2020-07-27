@@ -1,3 +1,64 @@
+# React with Docker
+
+## Build Docker image
+
+```
+docker build -f Dockerfile.dev .
+docker run -it -p 3000:3000 CONTAINER_ID  (static!)
+docker run -it -p 3000:3000 -v /app/node_modules -v ${PWD}:/app -e CHOKIDAR_USEPOLLING=true CONTAINER_ID
+docker build -f Dockerfile.dev .  (get container id)
+docker run -it <container-id> npm run test
+
+// Test Step (Solution1)
+--> add another App.js Test..
+docker-compose up
+--> open another terminal! disadvantage: you have to remember the container-id!
+docker ps
+docker exec -it <container-id> npm run test
+//  Test Step (Solution2)
+// add a tests section, see in docker-compose.yml
+// disadvantage: no interaction, also not with docker attach <container-id>
+
+// Prod Build Step
+docker build .
+docker run -p 8080:80 <container-id>
+
+// Cleanup Step
+docker images
+docker image rm -f <container-id>
+```
+
+## V1 fix https://www.udemy.com/course/docker-and-kubernetes-the-complete-guide/learn/lecture/18562132#overview
+```
+version: '3'
+services:
+  web:
+    stdin_open: true
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - /app/node_modules
+      - .:/app
+```
+
+
+## V2 if Dockerfile diffrent like Dockerfile.dev use..
+```
+version: '3'
+services:
+  web:
+    stdin_open: true
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - /app/node_modules
+      - .:/app
+```
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
@@ -66,3 +127,6 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/de
 ### `yarn build` fails to minify
 
 This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+
+
+
